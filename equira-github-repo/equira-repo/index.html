@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Équira — Verify Credentials. Instantly. Forever.</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --violet: #5B21B6;
+    --violet-dark: #3B0F8F;
+    --violet-light: #7C3AED;
+    --violet-pale: #EDE9FF;
+    --teal: #0D9488;
+    --teal-light: #CCFBF1;
+    --gold: #F59E0B;
+    --gold-light: #FEF3C7;
+    --white: #FFFFFF;
+    --off-white: #F8F6FF;
+    --charcoal: #1E1B4B;
+    --gray: #6B7280;
+    --gray-light: #F3F4F6;
+    --border: #E5E7EB;
+    --shadow: 0 4px 24px rgba(91,33,182,0.10);
+    --shadow-lg: 0 8px 40px rgba(91,33,182,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--off-white); color: var(--charcoal); min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(91,33,182,0.07);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.5rem; }
+  .nav-logo-icon {
+    width: 36px; height: 36px; background: var(--violet);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .nav-logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--charcoal); }
+  .nav-logo-text span { color: var(--violet); }
+  .nav-links { display: flex; gap: 0.5rem; }
+  .nav-btn {
+    padding: 0.45rem 1.1rem; border-radius: 8px; font-size: 0.88rem;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.18s;
+  }
+  .nav-btn-ghost { background: transparent; color: var(--violet); border: 1.5px solid var(--violet); }
+  .nav-btn-ghost:hover { background: var(--violet-pale); }
+  .nav-btn-fill { background: var(--violet); color: white; }
+  .nav-btn-fill:hover { background: var(--violet-dark); }
+
+  /* ── PAGES ── */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── HOME ── */
+  .hero {
+    max-width: 900px; margin: 0 auto;
+    padding: 4rem 2rem 2rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--violet-pale); color: var(--violet);
+    padding: 0.35rem 1rem; border-radius: 999px;
+    font-size: 0.82rem; font-weight: 600; margin-bottom: 1.5rem;
+    border: 1px solid #C4B5FD;
+  }
+  .hero-badge .dot { width: 7px; height: 7px; background: var(--violet); border-radius: 50%; animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 4.5rem);
+    line-height: 1.08; color: var(--charcoal); margin-bottom: 1.2rem;
+  }
+  .hero h1 em { color: var(--violet); font-style: italic; }
+  .hero p { font-size: 1.15rem; color: var(--gray); max-width: 580px; margin: 0 auto 2rem; line-height: 1.65; }
+  .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3rem; }
+  .btn-primary {
+    background: var(--violet); color: white;
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;
+    box-shadow: 0 4px 16px rgba(91,33,182,0.3);
+  }
+  .btn-primary:hover { background: var(--violet-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(91,33,182,0.35); }
+  .btn-secondary {
+    background: white; color: var(--violet);
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; border: 1.5px solid var(--violet); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--violet-pale); transform: translateY(-2px); }
+
+  .stats-row {
+    display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 3.5rem;
+  }
+  .stat-card {
+    background: white; border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.2rem 1.8rem; text-align: center; box-shadow: var(--shadow);
+    min-width: 140px;
+  }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--violet); }
+  .stat-lbl { font-size: 0.8rem; color: var(--gray); margin-top: 0.2rem; }
+
+  /* How it works */
+  .section { max-width: 960px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+  .section-title {
+    text-align: center; font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: var(--charcoal); margin-bottom: 0.5rem;
+  }
+  .section-sub { text-align: center; color: var(--gray); margin-bottom: 2.5rem; font-size: 0.95rem; }
+  .steps-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .step-card {
+    background: white; border-radius: 16px; padding: 1.5rem 1.2rem;
+    width: 160px; text-align: center; box-shadow: var(--shadow);
+    border: 1.5px solid var(--border); position: relative; transition: transform 0.2s;
+  }
+  .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; color: white; margin: 0 auto 1rem;
+  }
+  .step-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+  .step-label { font-weight: 700; font-size: 0.9rem; color: var(--charcoal); margin-bottom: 0.4rem; }
+  .step-desc { font-size: 0.78rem; color: var(--gray); line-height: 1.4; }
+  .step-arrow { display: flex; align-items: center; padding-top: 2rem; color: var(--violet); font-size: 1.2rem; }
+
+  /* ── VERIFY PAGE ── */
+  .verify-wrap { max-width: 600px; margin: 3rem auto; padding: 0 1.5rem; }
+  .verify-card {
+    background: white; border-radius: 20px; padding: 2.5rem;
+    box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+  }
+  .verify-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .verify-card p { color: var(--gray); margin-bottom: 2rem; font-size: 0.95rem; }
+  .input-group { margin-bottom: 1.2rem; }
+  .input-group label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--charcoal); letter-spacing: 0.03em; }
+  .input-group input {
+    width: 100%; padding: 0.85rem 1rem; border-radius: 10px;
+    border: 1.5px solid var(--border); font-size: 1rem;
+    font-family: 'JetBrains Mono', monospace; transition: border 0.2s;
+    outline: none; background: var(--off-white);
+  }
+  .input-group input:focus { border-color: var(--violet); background: white; }
+  .input-group input::placeholder { color: #B0B7C3; }
+  .btn-verify {
+    width: 100%; padding: 1rem; background: var(--violet); color: white;
+    border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    box-shadow: 0 4px 16px rgba(91,33,182,0.3);
+  }
+  .btn-verify:hover { background: var(--violet-dark); transform: translateY(-1px); }
+  .btn-verify:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Result card */
+  .result-card {
+    margin-top: 1.5rem; border-radius: 16px; overflow: hidden;
+    border: 1.5px solid var(--teal); display: none; animation: fadeIn 0.4s ease;
+  }
+  .result-card.error { border-color: #EF4444; }
+  .result-header {
+    background: var(--teal); color: white; padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 0.7rem; font-weight: 700;
+  }
+  .result-card.error .result-header { background: #EF4444; }
+  .result-body { padding: 1.5rem; background: white; }
+  .result-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+  .result-row:last-child { border-bottom: none; }
+  .result-key { font-size: 0.8rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.4rem; }
+  .result-val { font-size: 0.95rem; font-weight: 600; color: var(--charcoal); text-align: right; max-width: 60%; }
+  .hash-box {
+    margin-top: 1rem; background: var(--charcoal); color: #A5F3FC;
+    padding: 0.8rem 1rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; word-break: break-all; display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  }
+  .copy-btn {
+    background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.25rem 0.6rem;
+    border-radius: 4px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+
+  /* Demo IDs hint */
+  .demo-hint {
+    margin-top: 1.2rem; padding: 1rem 1.2rem; background: var(--gold-light);
+    border-radius: 10px; border: 1px solid var(--gold);
+  }
+  .demo-hint p { font-size: 0.82rem; color: #92400E; font-weight: 600; margin-bottom: 0.5rem; }
+  .demo-ids { display: flex; flex-direction: column; gap: 0.3rem; }
+  .demo-id-btn {
+    background: white; border: 1px solid var(--gold); border-radius: 6px;
+    padding: 0.35rem 0.7rem; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; color: var(--violet); cursor: pointer; text-align: left;
+    transition: background 0.15s;
+  }
+  .demo-id-btn:hover { background: var(--gold-light); }
+
+  /* ── DASHBOARD PAGE ── */
+  .dash-wrap { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+  .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .dash-header h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; }
+  .dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .dash-stat {
+    background: white; border-radius: 14px; padding: 1.3rem 1.5rem;
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .dash-stat-label { font-size: 0.78rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .dash-stat-val { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--violet); }
+  .dash-stat-sub { font-size: 0.78rem; color: var(--teal); margin-top: 0.2rem; font-weight: 600; }
+
+  .cred-table { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
+  .cred-table-header {
+    display: grid; grid-template-columns: 2fr 1.5fr 1.2fr 1fr 0.8fr;
+    padding: 0.9rem 1.5rem; background: var(--off-white);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .cred-row {
+    display: grid; grid-template-columns: 2fr 1.5fr 1.2fr 1fr 0.8fr;
+    padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+    align-items: center; transition: background 0.15s;
+  }
+  .cred-row:last-child { border-bottom: none; }
+  .cred-row:hover { background: var(--off-white); }
+  .cred-name { font-weight: 600; font-size: 0.9rem; }
+  .cred-course { font-size: 0.85rem; color: var(--gray); }
+  .cred-inst { font-size: 0.85rem; color: var(--charcoal); }
+  .cred-date { font-size: 0.82rem; color: var(--gray); }
+  .badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.25rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+  }
+  .badge-verified { background: var(--teal-light); color: var(--teal); }
+  .badge-pending { background: var(--gold-light); color: #92400E; }
+
+  /* ── UPLOAD PAGE ── */
+  .upload-wrap { max-width: 680px; margin: 3rem auto; padding: 0 1.5rem; }
+  .upload-card { background: white; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+  .upload-card h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .upload-card > p { color: var(--gray); margin-bottom: 2rem; }
+  .upload-zone {
+    border: 2px dashed var(--violet); border-radius: 14px;
+    padding: 2.5rem; text-align: center; cursor: pointer;
+    background: var(--violet-pale); transition: all 0.2s; margin-bottom: 1.5rem;
+  }
+  .upload-zone:hover { background: #DDD6FE; }
+  .upload-zone .icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .upload-zone p { font-weight: 600; color: var(--violet); margin-bottom: 0.3rem; }
+  .upload-zone span { font-size: 0.82rem; color: var(--gray); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-field label { font-size: 0.83rem; font-weight: 600; color: var(--charcoal); }
+  .form-field input, .form-field select {
+    padding: 0.75rem 0.9rem; border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 0.9rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border 0.2s;
+  }
+  .form-field input:focus, .form-field select:focus { border-color: var(--violet); }
+  .upload-success { display: none; text-align: center; padding: 1.5rem; animation: fadeIn 0.4s ease; }
+  .upload-success .checkmark { font-size: 3rem; margin-bottom: 0.8rem; }
+  .upload-success h3 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--teal); margin-bottom: 0.5rem; }
+  .uvid-display {
+    margin: 1rem auto; background: var(--charcoal); color: #A5F3FC;
+    padding: 0.8rem 1.2rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; display: inline-block;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center; padding: 2rem; color: var(--gray); font-size: 0.82rem;
+    border-top: 1px solid var(--border); background: white; margin-top: 3rem;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .cred-table-header, .cred-row { grid-template-columns: 2fr 1.5fr 1fr; }
+    .cred-table-header > *:nth-child(4), .cred-table-header > *:nth-child(5),
+    .cred-row > *:nth-child(4), .cred-row > *:nth-child(5) { display: none; }
+    .steps-row { gap: 0.5rem; }
+    .step-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+    </div>
+    <span class="nav-logo-text">É<span>quira</span></span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn nav-btn-ghost" onclick="showPage('verify')">Verify Credential</button>
+    <button class="nav-btn nav-btn-fill" onclick="showPage('dashboard')">Dashboard</button>
+  </div>
+</nav>
+
+<!-- ═══ HOME PAGE ═══ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge"><span class="dot"></span> Live MVP — Quantum Sprint 2026</div>
+    <h1>Verify credentials.<br/><em>Instantly. Forever.</em></h1>
+    <p>AI + Blockchain-powered academic credential verification that makes fake degrees cryptographically impossible.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="showPage('verify')">
+        <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        Verify a Credential
+      </button>
+      <button class="btn-secondary" onclick="showPage('upload')">Upload Credential</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">100M+</div><div class="stat-lbl">Credentials issued/yr</div></div>
+      <div class="stat-card"><div class="stat-num">0</div><div class="stat-lbl">Universal systems exist</div></div>
+      <div class="stat-card"><div class="stat-num">&lt;2s</div><div class="stat-lbl">Équira verify time</div></div>
+      <div class="stat-card"><div class="stat-num">SHA‑256</div><div class="stat-lbl">Cryptographic hashing</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">How Équira Works</h2>
+    <p class="section-sub">A standardized AI-driven process for academic credential verification</p>
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num" style="background:var(--violet)">01</div>
+        <div class="step-icon">🏛️</div>
+        <div class="step-label">Upload Doc</div>
+        <div class="step-desc">Admin uploads marksheet to the platform</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num" style="background:var(--violet-light)">02</div>
+        <div class="step-icon">🧠</div>
+        <div class="step-label">AI Extracts</div>
+        <div class="step-desc">Gemini extracts & standardizes student data</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num" style="background:var(--teal)">03</div>
+        <div class="step-icon">🔗</div>
+        <div class="step-label">Hash & Store</div>
+        <div class="step-desc">SHA-256 hash stored on Ethereum blockchain</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num" style="background:var(--gold)">04</div>
+        <div class="step-icon">📱</div>
+        <div class="step-label">Generate QR</div>
+        <div class="step-desc">Unique UVID + QR code created</div>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num" style="background:var(--teal)">05</div>
+        <div class="step-icon">✅</div>
+        <div class="step-label">Instant Verify</div>
+        <div class="step-desc">Scan QR → verified result instantly</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VERIFY PAGE ═══ -->
+<div id="page-verify" class="page">
+  <div class="verify-wrap">
+    <div class="verify-card">
+      <h2>Verify a Credential</h2>
+      <p>Enter a Verification ID to instantly confirm if an academic credential is authentic and untampered.</p>
+
+      <div class="input-group">
+        <label>VERIFICATION ID (UVID)</label>
+        <input type="text" id="uvid-input" placeholder="e.g. 3f4a9c12-8e2b-4d7f-a1b0-c9e3d2f18a45" />
+      </div>
+      <button class="btn-verify" id="verify-btn" onclick="verifyCredential()">
+        <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        Verify Now →
+      </button>
+
+      <div id="result-card" class="result-card">
+        <div class="result-header" id="result-header">
+          <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          <span id="result-status">VERIFIED AUTHENTIC</span>
+        </div>
+        <div class="result-body" id="result-body"></div>
+      </div>
+
+      <div class="demo-hint">
+        <p>🔑 Try these demo Verification IDs:</p>
+        <div class="demo-ids">
+          <button class="demo-id-btn" onclick="fillId('3f4a9c12-8e2b-4d7f-a1b0-c9e3d2f18a45')">3f4a9c12-8e2b-4d7f-a1b0-c9e3d2f18a45</button>
+          <button class="demo-id-btn" onclick="fillId('7b2d4e89-1f3a-4c6d-b8e2-a5f97c3d20b1')">7b2d4e89-1f3a-4c6d-b8e2-a5f97c3d20b1</button>
+          <button class="demo-id-btn" onclick="fillId('9e1c5a37-4b8d-4f2e-c3a7-d6b82e5f19c4')">9e1c5a37-4b8d-4f2e-c3a7-d6b82e5f19c4</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD PAGE ═══ -->
+<div id="page-dashboard" class="page">
+  <div class="dash-wrap">
+    <div class="dash-header">
+      <h2>Admin Dashboard</h2>
+      <button class="btn-primary" onclick="showPage('upload')" style="font-size:0.88rem;padding:0.6rem 1.3rem">
+        + Upload Credential
+      </button>
+    </div>
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <div class="dash-stat-label">Total Credentials</div>
+        <div class="dash-stat-val">247</div>
+        <div class="dash-stat-sub">↑ 12 this month</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Verified Today</div>
+        <div class="dash-stat-val">38</div>
+        <div class="dash-stat-sub">↑ 5 from yesterday</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Institutions</div>
+        <div class="dash-stat-val">4</div>
+        <div class="dash-stat-sub">IITM, SIMATS + 2</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Fraud Blocked</div>
+        <div class="dash-stat-val">3</div>
+        <div class="dash-stat-sub" style="color:#EF4444">Tampered detected</div>
+      </div>
+    </div>
+
+    <div class="cred-table">
+      <div class="cred-table-header">
+        <span>Student</span><span>Institution</span><span>Course</span><span>Issued</span><span>Status</span>
+      </div>
+      <div class="cred-row">
+        <div><div class="cred-name">Priya Sharma</div><div class="cred-course">3f4a9c12…a45</div></div>
+        <div class="cred-inst">Anna University</div>
+        <div class="cred-course">B.Tech Computer Science</div>
+        <div class="cred-date">10 Apr 2026</div>
+        <div><span class="badge badge-verified">● Verified</span></div>
+      </div>
+      <div class="cred-row">
+        <div><div class="cred-name">Arjun Mehta</div><div class="cred-course">7b2d4e89…b1</div></div>
+        <div class="cred-inst">IITM</div>
+        <div class="cred-course">M.Tech AI & ML</div>
+        <div class="cred-date">02 Mar 2026</div>
+        <div><span class="badge badge-verified">● Verified</span></div>
+      </div>
+      <div class="cred-row">
+        <div><div class="cred-name">Kavya Nair</div><div class="cred-course">9e1c5a37…c4</div></div>
+        <div class="cred-inst">SIMATS</div>
+        <div class="cred-course">BBA Finance</div>
+        <div class="cred-date">15 Jan 2026</div>
+        <div><span class="badge badge-verified">● Verified</span></div>
+      </div>
+      <div class="cred-row">
+        <div><div class="cred-name">Rohit Verma</div><div class="cred-course">2a9f7b14…d9</div></div>
+        <div class="cred-inst">VIT Chennai</div>
+        <div class="cred-course">B.Sc Data Science</div>
+        <div class="cred-date">20 May 2026</div>
+        <div><span class="badge badge-pending">⏳ Pending</span></div>
+      </div>
+      <div class="cred-row">
+        <div><div class="cred-name">Sneha Iyer</div><div class="cred-course">5c3d8e21…f7</div></div>
+        <div class="cred-inst">Anna University</div>
+        <div class="cred-course">B.E Mechanical</div>
+        <div class="cred-date">08 Apr 2026</div>
+        <div><span class="badge badge-verified">● Verified</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ UPLOAD PAGE ═══ -->
+<div id="page-upload" class="page">
+  <div class="upload-wrap">
+    <div class="upload-card">
+      <h2>Upload Credential</h2>
+      <p>Upload a marksheet or certificate. Our AI will extract, standardize, and store it on the blockchain.</p>
+
+      <div id="upload-form">
+        <div class="upload-zone" onclick="simulateUpload()">
+          <div class="icon">📄</div>
+          <p>Click to upload marksheet / certificate</p>
+          <span>PDF, JPG, PNG supported · Max 10MB</span>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Student Full Name</label>
+            <input type="text" id="student-name" placeholder="e.g. Priya Sharma" />
+          </div>
+          <div class="form-field">
+            <label>Student ID</label>
+            <input type="text" placeholder="e.g. 2022CS0451" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Institution</label>
+            <select>
+              <option>Anna University</option>
+              <option>IIT Madras</option>
+              <option>SIMATS</option>
+              <option>VIT Chennai</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Course / Degree</label>
+            <input type="text" placeholder="e.g. B.Tech Computer Science" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Semester / Year</label>
+            <input type="text" placeholder="e.g. 4th Semester" />
+          </div>
+          <div class="form-field">
+            <label>Issue Date</label>
+            <input type="date" />
+          </div>
+        </div>
+        <button class="btn-verify" style="margin-top:0.5rem" onclick="submitUpload()">
+          <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          Generate Blockchain Credential
+        </button>
+      </div>
+
+      <div class="upload-success" id="upload-success">
+        <div class="checkmark">✅</div>
+        <h3>Credential Successfully Issued!</h3>
+        <p style="color:var(--gray);margin-bottom:0.5rem">Blockchain hash stored. QR code generated.</p>
+        <div class="uvid-display" id="generated-uvid"></div>
+        <p style="font-size:0.82rem;color:var(--gray);margin-top:0.8rem">Share this UVID with the student for instant verification.</p>
+        <button class="btn-primary" style="margin:1rem auto 0;display:inline-flex" onclick="showPage('verify')">Try Verifying It →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>Équira</strong> — Verify credentials. Instantly. Forever. &nbsp;·&nbsp;
+  Built for Quantum Sprint 2026 &nbsp;·&nbsp;
+  Maha Sweta S & Dr Sumathy K, Chennai
+</footer>
+
+<script>
+// ── Demo credential database ──────────────────────────
+const CREDS = {
+  "3f4a9c12-8e2b-4d7f-a1b0-c9e3d2f18a45": {
+    student: "Priya Sharma",
+    institution: "Anna University",
+    course: "B.Tech Computer Science",
+    semester: "4th Semester",
+    issued: "10 April 2026",
+    issuedBy: "admin@annauniv.edu",
+    hash: "a8f3c2e1b9d4f7a3c5e2b1d9f4a7c3e5b8d1f4a7c9e2b5d8f1a4c7e0b3d6f9a"
+  },
+  "7b2d4e89-1f3a-4c6d-b8e2-a5f97c3d20b1": {
+    student: "Arjun Mehta",
+    institution: "IIT Madras",
+    course: "M.Tech Artificial Intelligence & ML",
+    semester: "2nd Year",
+    issued: "02 March 2026",
+    issuedBy: "registrar@iitm.ac.in",
+    hash: "b7e4d1a9c6f3e0b8d5a2f9c7e4b1d8a5f3c0e7b4d2a9f6c3e1b8d5a3f0c8e5b2"
+  },
+  "9e1c5a37-4b8d-4f2e-c3a7-d6b82e5f19c4": {
+    student: "Kavya Nair",
+    institution: "SIMATS University",
+    course: "BBA Finance",
+    semester: "6th Semester",
+    issued: "15 January 2026",
+    issuedBy: "admin@simats.edu.in",
+    hash: "c9f6e3b0d7a4c1f8e5b2d9a6c3f0e8b5d2a0f7c4e1b9d6a3f1c8e5b3d0a7f4c2"
+  }
+};
+
+// ── Navigation ──────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Verify ──────────────────────────────────────────
+function fillId(id) {
+  document.getElementById('uvid-input').value = id;
+  document.getElementById('uvid-input').focus();
+}
+
+function verifyCredential() {
+  const input = document.getElementById('uvid-input');
+  const uvid = input.value.trim();
+  const btn = document.getElementById('verify-btn');
+  const card = document.getElementById('result-card');
+
+  if (!uvid) { input.style.borderColor = '#EF4444'; setTimeout(() => input.style.borderColor = '', 1200); return; }
+
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Verifying on blockchain…';
+  card.style.display = 'none';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg> Verify Now →';
+
+    const cred = CREDS[uvid];
+    card.style.display = 'block';
+
+    if (cred) {
+      card.className = 'result-card';
+      document.getElementById('result-header').innerHTML = `
+        <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        <span>● VERIFIED AUTHENTIC</span>`;
+      document.getElementById('result-body').innerHTML = `
+        <div class="result-row">
+          <span class="result-key">👤 Student</span>
+          <span class="result-val">${cred.student}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">🏛️ Institution</span>
+          <span class="result-val">${cred.institution}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">📚 Course</span>
+          <span class="result-val">${cred.course}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">📅 Semester</span>
+          <span class="result-val">${cred.semester}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">🗓️ Issued On</span>
+          <span class="result-val">${cred.issued}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">✉️ Issued By</span>
+          <span class="result-val">${cred.issuedBy}</span>
+        </div>
+        <div class="hash-box">
+          <span>SHA-256: ${cred.hash}</span>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('${cred.hash}');this.textContent='Copied!'">Copy</button>
+        </div>`;
+    } else {
+      card.className = 'result-card error';
+      document.getElementById('result-header').innerHTML = `
+        <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        <span>VERIFICATION FAILED</span>`;
+      document.getElementById('result-body').innerHTML = `
+        <p style="color:#EF4444;font-weight:600;margin-bottom:0.5rem">This credential could not be verified.</p>
+        <p style="color:var(--gray);font-size:0.9rem">The UVID <strong>${uvid}</strong> was not found in the Équira blockchain registry. This may indicate a tampered or fraudulent credential.</p>`;
+    }
+  }, 1800);
+}
+
+// Allow Enter key
+document.getElementById('uvid-input').addEventListener('keydown', e => { if (e.key === 'Enter') verifyCredential(); });
+
+// ── Upload ──────────────────────────────────────────
+function simulateUpload() {
+  // just a visual cue
+  const zone = document.querySelector('.upload-zone');
+  zone.style.background = '#DDD6FE';
+  zone.innerHTML = '<div class="icon">✅</div><p style="color:var(--violet)">File selected: marksheet.pdf</p><span>Ready to process</span>';
+}
+
+function submitUpload() {
+  const btn = document.querySelector('#upload-form .btn-verify');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> AI extracting data… hashing on Ethereum…';
+
+  setTimeout(() => {
+    const uvid = generateUVID();
+    document.getElementById('generated-uvid').textContent = uvid;
+    document.getElementById('upload-form').style.display = 'none';
+    document.getElementById('upload-success').style.display = 'block';
+    // Store for demo
+    const name = document.getElementById('student-name').value || 'New Student';
+    CREDS[uvid] = {
+      student: name, institution: 'Anna University',
+      course: 'B.Tech Computer Science', semester: '4th Semester',
+      issued: new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'long',year:'numeric'}),
+      issuedBy: 'admin@annauniv.edu',
+      hash: Array.from({length:64},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('')
+    };
+  }, 2500);
+}
+
+function generateUVID() {
+  const s = () => Math.random().toString(16).substr(2);
+  return `${s().substr(0,8)}-${s().substr(0,4)}-${s().substr(0,4)}-${s().substr(0,4)}-${s().substr(0,12)}`;
+}
+</script>
+</body>
+</html>
